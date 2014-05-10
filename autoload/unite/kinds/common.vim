@@ -56,7 +56,8 @@ function! s:kind.action_table.yank.func(candidates) "{{{
   echo 'Yanked: ' . text
 
   if has('clipboard')
-    call setreg(v:register, text)
+    let @* = text
+    let @+ = text
   endif
 endfunction"}}}
 
