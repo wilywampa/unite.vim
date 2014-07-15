@@ -89,6 +89,10 @@ function! s:source_buffer_all.hooks.on_post_filter(args, context) "{{{
   endfor
 endfunction"}}}
 
+function! unite#sources#buffer#get_unite_buffer_list()
+  return s:get_buffer_list(0, 0, 0, 0)
+endfunction"}}}
+
 function! s:source_buffer_all.gather_candidates(args, context) "{{{
   if a:context.is_redraw
     " Recaching.

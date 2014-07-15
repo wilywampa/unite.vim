@@ -103,6 +103,15 @@ function! s:source.action_table.delete.func(candidates) "{{{
 
   call s:save()
 endfunction"}}}
+
+let s:source.action_table.search = {
+      \ 'description' : 'search for text from yank history',
+      \ 'is_quit' : 1,
+      \ }
+function! s:source.action_table.search.func(candidate) "{{{
+  let @/ = a:candidate.word
+  echo a:candidate.word
+endfunction"}}}
 "}}}
 
 function! s:save()  "{{{
