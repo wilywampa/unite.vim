@@ -58,6 +58,9 @@ function! unite#sources#history_yank#_append() "{{{
     if @" !=# @+
       call s:add_register('+')
     endif
+    if @" !=# @* && @+ !=# @*
+      call s:add_register('*')
+    endif
   endif
 
   if prev_histories !=# s:yank_histories

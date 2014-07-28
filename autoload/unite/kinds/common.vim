@@ -47,7 +47,7 @@ endfunction"}}}
 let s:kind.action_table.yank = {
       \ 'description' : 'yank word or text',
       \ 'is_selectable' : 1,
-      \ 'is_quit' : 0,
+      \ 'is_quit' : 1,
       \ }
 function! s:kind.action_table.yank.func(candidates) "{{{
   let text = join(map(copy(a:candidates),
