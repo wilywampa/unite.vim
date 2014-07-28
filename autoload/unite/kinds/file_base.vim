@@ -63,6 +63,26 @@ function! s:kind.action_table.open.func(candidates) "{{{
   endfor
 endfunction"}}}
 
+let s:kind.action_table.view = {
+      \ 'description' : 'view files (read only)',
+      \ 'is_selectable' : 1,
+      \ }
+function! s:kind.action_table.view.func(candidates) "{{{
+  for candidate in a:candidates
+    if buflisted(unite#util#escape_file_searching(
+          \ candidate.action__path))
+      execute 'buffer' bufnr(unite#util#escape_file_searching(
+          \ candidate.action__path))
+    else
+      call s:execute_command('view', candidate)
+    endif
+
+    call unite#remove_previewed_buffer_list(
+          \ bufnr(unite#util#escape_file_searching(
+          \       candidate.action__path)))
+  endfor
+endfunction"}}}
+
 let s:kind.action_table.preview = {
       \ 'description' : 'preview file',
       \ 'is_quit' : 0,
