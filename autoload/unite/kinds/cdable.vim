@@ -54,6 +54,9 @@ function! s:kind.action_table.cd.func(candidate) "{{{
   endif
 
   if &filetype ==# 'vimfiler' || &filetype ==# 'vimshell'
+    if &filetype ==# 'vimfiler'
+      execute g:unite_kind_cdable_cd_command fnameescape(directory)
+    endif
     call s:external_cd(a:candidate)
   else
     execute g:unite_kind_cdable_cd_command fnameescape(directory)
