@@ -76,14 +76,7 @@ function! unite#filters#lua_matcher(candidates, context, ignorecase) "{{{
 
   let input = substitute(a:context.input, '\\ ', ' ', 'g')
   let input = substitute(input, '\\\(.\)', '\1', 'g')
-  let l:ignorecase = a:ignorecase && input !~ '\u'
-  for inp in a:context['input_list']
-    if inp =~ '\u'
-      let l:ignorecase = 0
-    endif
-  endfo
-  let g:context = a:context
-  if l:ignorecase
+  if a:ignorecase
     let input = tolower(input)
   endif
 
@@ -91,7 +84,7 @@ function! unite#filters#lua_matcher(candidates, context, ignorecase) "{{{
 do
   local input = vim.eval('input')
   local candidates = vim.eval('a:candidates')
-  if (vim.eval('l:ignorecase') ~= 0) then
+  if (vim.eval('a:ignorecase') ~= 0) then
     for i = #candidates-1, 0, -1 do
       if (string.find(string.lower(candidates[i].word), input, 1, true) == nil) then
         candidates[i] = nil
