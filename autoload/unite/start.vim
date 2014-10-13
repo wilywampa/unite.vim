@@ -313,6 +313,7 @@ function! unite#start#resume(buffer_name, ...) "{{{
   let context = getbufvar(bufnr, 'unite').context
   let context.resume = 1
 
+  let prev_bufnr = bufnr('%')
   let winnr = winnr()
   let win_rest_cmd = context.unite__direct_switch ||
         \ unite#helper#get_unite_winnr(context.buffer_name) > 0 ?
@@ -331,6 +332,8 @@ function! unite#start#resume(buffer_name, ...) "{{{
   " Set parameters.
   let unite = b:unite
   let unite.winnr = winnr
+  let unite.prev_bufnr = prev_bufnr
+  let unite.prev_winnr = winnr
   if !context.unite__direct_switch
     let unite.win_rest_cmd = win_rest_cmd
   endif
@@ -418,6 +421,22 @@ function! unite#start#_pos(buffer_name, direction, count) "{{{
   call unite#view#_redraw_echo(printf('[%d/%d] %s',
         \ unite.candidate_cursor+1, len(unite.candidates),
         \ get(candidate, 'abbr', candidate.word)))
+
+  let winnr = unite#helper#get_unite_winnr(unite.context.buffer_name)
+  if winnr < 0
+    return
+  endif
+
+  " Move cursor
+  let prev_winnr = winnr()
+  try
+    execute winnr . 'wincmd w'
+    call cursor(unite#helper#get_current_candidate_linenr(next), 0)
+    call unite#view#_set_cursor_line()
+    call unite#view#_save_position()
+  finally
+    execute prev_winnr . 'wincmd w'
+  endtry
 endfunction"}}}
 
 function! s:get_candidates(sources, context) "{{{
