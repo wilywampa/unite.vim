@@ -602,16 +602,10 @@ g:unite_source_find_max_candidates
 
 					*g:unite_source_line_enable_highlight*
 g:unite_source_line_enable_highlight
-		Control whether search keyword is highlighted in unite buffer.
+		Control whether highlighted in unite buffer.
+		Note: It is slow.
 
-		The default value is 1.
-
-				*g:unite_source_line_search_word_highlight*
-g:unite_source_line_search_word_highlight
-		Highlight group applied to search keyword when
-		|g:unite_source_enable_highlight| is true.
-
-		The default value is "Search".
+		The default value is 0.
 
 g:unite_source_alias_aliases			*g:unite_source_alias_aliases*
 		Set |unite-source-alias| settings.  This variable is a
@@ -858,7 +852,7 @@ g:unite_cursor_line_highlight		*g:unite_cursor_line_highlight*
 				*g:unite_enable_short_source_names*
 g:unite_enable_short_source_names
 		If this variable is 1, unite buffer will show short source
-		names.
+		names when multiple sources.
 		Note: This variable is deprecated.  Please use
 		|unite#custom#profile()| instead.
 
@@ -1194,7 +1188,7 @@ k		|<Plug>(unite_loop_cursor_up)|
 <Up>		|<Plug>(unite_loop_cursor_up)|
 J		|<Plug>(unite_skip_cursor_down)|
 K		|<Plug>(unite_skip_cursor_up)|
-?		|<Plug>(unite_quick_help)|
+g?		|<Plug>(unite_quick_help)|
 N		|<Plug>(unite_new_candidate)|
 .		|<Plug>(unite_narrowing_dot)|
 <2-LeftMouse>	|<Plug>(unite_do_default_action)|
@@ -1861,7 +1855,7 @@ the context dictionary.
 
 					*unite-options-short-source-names*
 		-short-source-names
-		Use short source names.
+		Use short source names if multiple sources.
 
 						*unite-options-multi-line*
 		-multi-line
@@ -1976,12 +1970,12 @@ file/new	Nominates a new input file as a candidate.
 file/async	Similar to |unite-source-file|, but get files asynchronously.
 
 						*unite-source-file_rec*
-file_rec	Gather files recursive and nominates all directory or file
-		names under the search directory (argument 1) or the current
-		directory (if argument is omitted) as candidates.  This may
-		freeze Vim when there are too many candidates.  The candidates
-		are cached by file_rec source.  To clear cache, use
-		|<Plug>(unite_redraw)| keymapping.
+file_rec	Gather files recursive and nominates all file names under the
+		search directory (argument 1) or the current directory (if
+		argument is omitted) as candidates.  This may freeze Vim when
+		there are too many candidates.  The candidates are cached by
+		file_rec source.  To clear cache, use |<Plug>(unite_redraw)|
+		keymapping.
 		Note: If you edit file by Vim, file_rec source will update
 		cache file.
 		Note: If the candidates are over 1000, it will disable make
@@ -2238,6 +2232,9 @@ line		Nominates current buffer lines as candidates.
 		2. the wrap option. "wrap" or "nowrap". This is used when the
 		direction is "forward" or "backward". If it is omitted,
 		'wrapscan' option will be used.
+
+		Source custom options:
+		-custom-line-enable-highlight : enable buffer highlight
 
 		Example: >
 	nnoremap <silent> /  :<C-u>Unite -buffer-name=search
@@ -2533,6 +2530,15 @@ matcher_migemo	For Japanese migemo filter.
 matcher_hide_hidden_files
 		Hide hidden files filter.  If your input contains ".", hidden
 		files will be appeared.
+
+				*unite-filter-matcher_hide_current_file*
+matcher_hide_current_file
+		Hide current editing file. >
+
+	call unite#custom#source(
+	      \ 'file', 'matchers',
+	      \ ['matcher_default', 'matcher_hide_hidden_files',
+	      \  'matcher_hide_current_file'])
 
 						*unite-filter-matcher_context*
 matcher_context	A matcher which filters the candidates with user given glob

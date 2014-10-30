@@ -160,6 +160,7 @@ function! unite#start#temporary(sources, ...) "{{{
   let context.unite__is_resize = 0
   let context.unite__is_restart = 0
   let context.quick_match = 0
+  let context.resume = 0
 
   if context.script
     " Set buffer-name automatically.
@@ -345,6 +346,11 @@ function! unite#start#resume(buffer_name, ...) "{{{
   let unite.highlight_candidate = {}
 
   call unite#set_current_unite(unite)
+
+  if has_key(new_context, 'input')
+    call unite#mappings#narrowing(new_context.input)
+    call unite#redraw()
+  endif
 
   call unite#view#_resize_window()
   call unite#view#_init_cursor()
