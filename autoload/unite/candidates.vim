@@ -153,8 +153,20 @@ function! unite#candidates#gather(...) "{{{
 
   if unite.context.unique
     " Uniq filter.
-    let unite.candidates = unite#util#uniq_by(unite.candidates,
+    let has_paths = 1
+    for c in unite.candidates
+      if !exists('c.action__path')
+        let has_paths = 0
+      endif
+    endfor
+    if has_paths
+      let unite.candidates = unite#util#uniq_by(unite.candidates,
+          \ 'string(v:val.kind) . " " . v:val.action__path .
+          \ strpart(v:val.word, strridx(v:val.word, "/") + 1)')
+    else
+      let unite.candidates = unite#util#uniq_by(unite.candidates,
           \ "string(v:val.kind) . ' ' . v:val.word")
+    endif
   endif
 
   if is_gather_all || unite.context.prompt_direction ==# 'below'
