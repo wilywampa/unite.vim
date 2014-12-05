@@ -161,8 +161,8 @@ function! unite#candidates#gather(...) "{{{
     endfor
     if has_paths
       let unite.candidates = unite#util#uniq_by(unite.candidates,
-          \ 'string(v:val.kind) . " " . v:val.action__path .
-          \ strpart(v:val.word, strridx(v:val.word, "/") + 1)')
+          \ 'v:val.action__path . strpart(v:val.word, '.
+          \ 'strridx(v:val.word, "/") + 1)')
     else
       let unite.candidates = unite#util#uniq_by(unite.candidates,
           \ "string(v:val.kind) . ' ' . v:val.word")
