@@ -265,7 +265,8 @@ endfunction"}}}
 function! s:is_listed(is_bang, is_question, is_plus, is_minus, bufnr) "{{{
   return bufexists(a:bufnr) &&
         \ (a:is_question ? !buflisted(a:bufnr) :
-        \    (a:is_bang || buflisted(a:bufnr) || bufname(a:bufnr) == '--tree--'))
+        \    (a:is_bang || buflisted(a:bufnr)
+        \      || bufname(a:bufnr) =~? '\v--(tree|python|matlab)--'))
         \ && (!a:is_plus || getbufvar(a:bufnr, '&mod'))
         \ && (!a:is_minus || getbufvar(a:bufnr, '&buftype') !~# 'nofile')
         \ && (getbufvar(a:bufnr, '&filetype') !=# 'unite'
