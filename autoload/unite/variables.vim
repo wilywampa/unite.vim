@@ -174,6 +174,7 @@ function! s:initialize_default() "{{{
   let s:default_context = {
         \ 'input' : '',
         \ 'path' : '',
+        \ 'prompt' : '',
         \ 'start_insert' : 0,
         \ 'complete' : 0,
         \ 'script' : 0,
@@ -181,7 +182,6 @@ function! s:initialize_default() "{{{
         \ 'quit' : 1,
         \ 'buffer_name' : 'default',
         \ 'profile_name' : '',
-        \ 'prompt' : '> ',
         \ 'default_action' : 'default',
         \ 'winwidth' : 90,
         \ 'winheight' : 20,
@@ -227,6 +227,7 @@ function! s:initialize_default() "{{{
         \ 'short_source_names' : 0,
         \ 'candidate_icon' : ' ',
         \ 'marked_icon' : '*',
+        \ 'hide_icon' : 1,
         \ 'cursor_line_time' : '0.10',
         \ 'is_redraw' : 0,
         \ 'wipe' : 0,
@@ -246,7 +247,6 @@ function! s:initialize_default() "{{{
         \ 'unite__disable_max_candidates' : 0,
         \ 'unite__not_buffer' : 0,
         \ 'unite__is_resize' : 0,
-        \ 'unite__is_restart' : 0,
         \ }
 
   " For compatibility(deprecated variables)
@@ -262,6 +262,8 @@ function! s:initialize_default() "{{{
         \ ['abbr_highlight', 'g:unite_abbr_highlight'],
         \ ['update_time', 'g:unite_update_time'],
         \ ['short_source_names', 'g:unite_enable_short_source_names'],
+        \ ['candidate_icon', 'g:unite_candidate_icon'],
+        \ ['marked_icon', 'g:unite_marked_icon'],
         \ ['cursor_line_time', 'g:unite_cursor_line_time'],
         \ ['vertical_preview', 'g:unite_kind_file_vertical_preview'],
         \ ], "exists(v:val[1])")
