@@ -45,7 +45,13 @@ function! s:converter.filter(candidates, context)
         \ get(g:, 'unite_converter_file_directory_width', 45)])
 
   for candidate in candidates
-    let path = get(candidate, 'action__path', candidate.word)
+    if has_key(candidate, 'action__path')
+      let path = candidate.action__path
+    elseif has_key(candidate, 'action__buffer_nr')
+      let path = bufname(candidate.action__buffer_nr)
+    else
+      let path = candidate.word
+    endif
 
     let abbr = s:convert_to_abbr(path)
     let abbr = unite#util#truncate(abbr, max) . ' '
