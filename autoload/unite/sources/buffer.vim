@@ -90,6 +90,7 @@ function! s:source_buffer_all.hooks.on_post_filter(args, context) "{{{
 endfunction"}}}
 
 function! unite#sources#buffer#get_unite_buffer_list()
+  let s:prev_bufnr = bufnr('%')
   return s:get_buffer_list(0, 0, 0, 0)
 endfunction"}}}
 
@@ -214,8 +215,8 @@ function! s:make_abbr(bufnr, flags) "{{{
          \ unite#util#substitute_path_separator(path) . ' '
 endfunction"}}}
 function! s:compare(candidate_a, candidate_b) "{{{
-  return a:candidate_a.action__buffer_nr == unite#get_current_unite().prev_bufnr ?  1 :
-      \ (a:candidate_b.action__buffer_nr == unite#get_current_unite().prev_bufnr ? -1 :
+  return a:candidate_a.action__buffer_nr == s:prev_bufnr ?  1 :
+      \ (a:candidate_b.action__buffer_nr == s:prev_bufnr ? -1 :
       \ a:candidate_b.source__time - a:candidate_a.source__time)
 endfunction"}}}
 function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus) "{{{
@@ -246,6 +247,8 @@ function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus) "{{{
     let bufnr += 1
   endwhile
 
+  let s:prev_bufnr = has_key(unite#get_current_unite(), 'prev_bufnr') ?
+      \ unite#get_current_unite().prev_bufnr : bufnr('%')
   call sort(list, 's:compare')
 
   return list
