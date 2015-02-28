@@ -611,7 +611,7 @@ function! unite#view#_quit(is_force, ...)  "{{{
     elseif is_all || !context.temporary
       close!
       if unite.winnr != winnr()
-        execute unite.winnr . 'wincmd w'
+        silent! execute unite.winnr . 'wincmd w'
       endif
       call unite#view#_resize_window()
     endif
