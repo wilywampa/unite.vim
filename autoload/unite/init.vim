@@ -112,6 +112,10 @@ function! unite#init#_context(context, ...) "{{{
   if context.path != '' && context.path !~ '/$'
     let context.path .= '/'
   endif
+  if len(source_names) == 1
+        \ && !get(context, 'no_hide_source_names', 0)
+    let context.hide_source_names = 1
+  endif
 
   let context.is_changed = 0
 
@@ -753,6 +757,8 @@ function! unite#init#_sources(...) "{{{
       let source.white_globs = unite#util#convert2list(
             \ get(custom_source, 'white_globs',
             \    get(source, 'white_globs', [])))
+      let source.syntax = get(custom_source, 'syntax',
+            \    get(source, 'syntax', ''))
 
       let source.unite__len_candidates = 0
       let source.unite__orig_len_candidates = 0
