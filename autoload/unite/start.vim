@@ -52,7 +52,7 @@ function! unite#start#standard(sources, ...) "{{{
     if resume_bufnr > 0 &&
           \ getbufvar(resume_bufnr, 'unite').source_names ==#
           \    unite#helper#get_source_names(a:sources)
-      return unite#start#resume(context.buffer_name, context)
+      return unite#start#resume(context.buffer_name, get(a:000, 0, {}))
     endif
   endif
 
@@ -349,6 +349,8 @@ function! unite#start#resume(buffer_name, ...) "{{{
   let unite.preview_candidate = {}
   let unite.highlight_candidate = {}
   let unite.context.resume = 1
+  let unite.context.unite__old_winwidth = 0
+  let unite.context.unite__old_winheight = 0
 
   call unite#set_current_unite(unite)
 

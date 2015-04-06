@@ -317,7 +317,7 @@ function! s:source_file_async.async_gather_candidates(args, context) "{{{
   let stderr = a:context.source__proc.stderr
   if !stderr.eof
     " Print error.
-    let errors = filter(unite#util#read_lines(stderr, 100),
+    let errors = filter(unite#util#read_lines(stderr, 200),
           \ "v:val !~ '^\\s*$'")
     if !empty(errors)
       call unite#print_source_error(errors, self.name)
@@ -383,8 +383,6 @@ function! s:source_file_git.gather_candidates(args, context) "{{{
     return []
   endif
 
-  let a:context.source__directory = s:get_path(a:args, a:context)
-  let directory = a:context.source__directory
   if finddir('.git', ';') == ''
     " Not in git directory.
     call unite#print_source_message(
@@ -392,6 +390,11 @@ function! s:source_file_git.gather_candidates(args, context) "{{{
     let a:context.is_async = 0
     return []
   endif
+
+  let a:context.source__directory =
+        \ unite#util#substitute_path_separator(
+        \   fnamemodify(finddir('.git', ';'), ':p:h:h'))
+  let directory = a:context.source__directory
 
   call unite#print_source_message(
         \ 'directory: ' . directory, self.name)
@@ -432,6 +435,9 @@ function! s:source_file_git.async_gather_candidates(args, context) "{{{
         \   'action__path' : a:context.source__directory . '/' . v:val.word,
         \}")
 endfunction"}}}
+function! s:source_file_git.complete(args, context, arglead, cmdline, cursorpos) "{{{
+  return []
+endfunction"}}}
 
 " Source directory.
 let s:source_directory_rec = deepcopy(s:source_file_rec)
@@ -444,6 +450,12 @@ function! s:source_directory_rec.hooks.on_init(args, context) "{{{
   let a:context.source__is_directory = 1
   call s:on_init(a:args, a:context)
 endfunction"}}}
+function! s:source_directory_rec.hooks.on_post_filter(args, context) "{{{
+  for candidate in filter(copy(a:context.candidates),
+        \ "v:val.word[-1:] != '/'")
+    let candidate.abbr = candidate.word . '/'
+  endfor
+endfunction"}}}
 
 " Source directory/async.
 let s:source_directory_async = deepcopy(s:source_file_async)
@@ -455,6 +467,12 @@ let s:source_directory_async.default_kind = 'directory'
 function! s:source_directory_async.hooks.on_init(args, context) "{{{
   let a:context.source__is_directory = 1
   call s:on_init(a:args, a:context)
+endfunction"}}}
+function! s:source_directory_async.hooks.on_post_filter(args, context) "{{{
+  for candidate in filter(copy(a:context.candidates),
+        \ "v:val.word[-1:] != '/'")
+    let candidate.abbr = candidate.word . '/'
+  endfor
 endfunction"}}}
 
 " Misc.
