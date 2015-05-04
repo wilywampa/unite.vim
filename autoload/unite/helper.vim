@@ -192,13 +192,16 @@ endfunction"}}}
 function! unite#helper#parse_project_bang(args) "{{{
   let args = filter(copy(a:args), "v:val != '!'")
   if empty(args)
-    let args = ['']
+    return []
   endif
 
-  if get(a:args, 0, '') == '!'
+  if a:args[0] == '!'
     " Use project directory.
     let args[0] = unite#util#path2project_directory(args[0], 1)
   endif
+
+  let args[0] = unite#util#substitute_path_separator(
+        \ fnamemodify(unite#util#expand(args[0]), ':p'))
 
   return args
 endfunction"}}}
@@ -326,10 +329,6 @@ function! unite#helper#get_current_candidate(...) "{{{
           \ 0 : linenr - 1 - unite.prompt_linenr
   endif
 
-  if num < 0
-    return {}
-  endif
-
   let unite.candidate_cursor = num
 
   return get(unite#get_unite_candidates(), num, {})
@@ -364,15 +363,15 @@ function! unite#helper#call_filter(filter_name, candidates, context) "{{{
 endfunction"}}}
 function! unite#helper#call_source_filters(filters, candidates, context, source) "{{{
   let candidates = a:candidates
-  for Filter in a:filters
-    if type(Filter) == type('')
+  for l:Filter in a:filters
+    if type(l:Filter) == type('')
       let candidates = unite#helper#call_filter(
-            \ Filter, candidates, a:context)
+            \ l:Filter, candidates, a:context)
     else
-      let candidates = call(Filter, [candidates, a:context], a:source)
+      let candidates = call(l:Filter, [candidates, a:context], a:source)
     endif
 
-    unlet Filter
+    unlet l:Filter
   endfor
 
   return candidates
@@ -512,6 +511,12 @@ function! unite#helper#is_prompt(line) "{{{
   let context = unite#get_context()
   return (context.prompt_direction ==# 'below' && a:line >= prompt_linenr)
         \ || (context.prompt_direction !=# 'below' && a:line <= prompt_linenr)
+endfunction"}}}
+
+function! unite#helper#join_targets(targets) "{{{
+  return join(map(copy(a:targets),
+        \    "unite#util#escape_shell(
+        \               substitute(v:val, '/$', '', ''))"))
 endfunction"}}}
 
 let &cpo = s:save_cpo
