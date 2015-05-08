@@ -200,8 +200,11 @@ function! unite#helper#parse_project_bang(args) "{{{
     let args[0] = unite#util#path2project_directory(args[0], 1)
   endif
 
-  let args[0] = unite#util#substitute_path_separator(
-        \ fnamemodify(unite#util#expand(args[0]), ':p'))
+
+  if args[0] !~ '^%$\|^\$\h\w*$'
+    let args[0] = unite#util#substitute_path_separator(
+          \ fnamemodify(unite#util#expand(args[0]), ':p'))
+  endif
 
   return args
 endfunction"}}}
@@ -335,9 +338,8 @@ function! unite#helper#get_current_candidate(...) "{{{
 endfunction"}}}
 
 function! unite#helper#get_current_candidate_linenr(num) "{{{
-  let num = 0
-
   let candidate_num = 0
+  let num = 0
   for candidate in unite#get_unite_candidates()
     if !candidate.is_dummy
       let candidate_num += 1
@@ -345,12 +347,20 @@ function! unite#helper#get_current_candidate_linenr(num) "{{{
 
     let num += 1
 
-    if candidate_num >= a:num+1
+    if candidate_num >= a:num
       break
     endif
   endfor
 
-  return unite#get_current_unite().prompt_linenr + num
+  let unite = unite#get_current_unite()
+  if unite.context.prompt_direction ==# 'below'
+    let num = num * -1
+    if unite.prompt_linenr == 0
+      let num += line('$') + 1
+    endif
+  endif
+
+  return unite.prompt_linenr + num
 endfunction"}}}
 
 function! unite#helper#call_filter(filter_name, candidates, context) "{{{
