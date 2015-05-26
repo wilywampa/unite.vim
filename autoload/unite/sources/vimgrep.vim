@@ -46,7 +46,7 @@ let s:source = {
       \ }
 
 function! s:source.hooks.on_init(args, context) "{{{
-  let args = unite#helper#parse_project_args(a:args)
+  let args = unite#helper#parse_source_args(a:args)
 
   let target = get(args, 0, '')
   if target == ''
@@ -109,7 +109,7 @@ function! s:source.gather_candidates(args, context) "{{{
     return []
   endif
 
-  let cmdline = printf('vimgrep /%s/j %s',
+  let cmdline = printf('silent vimgrep /%s/j %s',
     \   escape(a:context.source__input, '/'),
     \   join(a:context.source__targets))
 
