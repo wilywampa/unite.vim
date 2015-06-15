@@ -629,8 +629,8 @@ function! unite#view#_quit(is_force, ...)  "{{{
       call unite#util#alternate_buffer()
     elseif is_all || !context.temporary
       close!
-      if unite.winnr != winnr()
-        silent! execute unite.winnr . 'wincmd w'
+      if unite.winnr != winnr() && unite.winnr <= winnr('$')
+        execute unite.winnr . 'wincmd w'
       endif
       call unite#view#_resize_window()
     endif
