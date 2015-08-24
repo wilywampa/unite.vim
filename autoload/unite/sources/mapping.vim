@@ -79,7 +79,7 @@ function! s:source.hooks.on_init(args, context) "{{{
 
     call add(s:cached_result, {
           \ 'word' : line,
-          \ 'action__command' : 'execute "normal ' . map . '"',
+          \ 'action__command' : 'call feedkeys("' . map . '")',
           \ 'action__mapping' : map,
           \ })
   endfor
