@@ -97,7 +97,8 @@ function! s:source.hooks.on_init(args, context) "{{{
   let a:context.source__input = get(a:args, 2, a:context.input)
   if a:context.source__input == '' || a:context.unite__is_restart
     let a:context.source__input = unite#util#input('Pattern: ',
-          \ a:context.source__input)
+          \ a:context.source__input,
+          \ 'customlist,unite#helper#complete_search_history')
   endif
 
   call unite#print_source_message('Pattern: '
@@ -195,11 +196,10 @@ function! s:source.gather_candidates(args, context) "{{{
     " Disable colors.
     let $TERM = 'dumb'
 
-    " Note: "pt" needs pty.
     let a:context.source__proc = vimproc#plineopen3(
           \ vimproc#util#iconv(cmdline, &encoding,
           \ g:unite_source_grep_encoding),
-          \ (fnamemodify(command, ':t:r') ==# 'pt'))
+          \ unite#helper#is_pty(command))
   finally
     let $TERM = save_term
   endtry
@@ -269,7 +269,9 @@ function! s:source.async_gather_candidates(args, context) "{{{
 
     if path ==# '.'
       call unite#print_source_error(
-            \ 'grep output format is wrong.', s:source.name)
+            \ 'Your grep configuration is wrong.'
+            \ . ' Please check ":help unite-source-grep" example.',
+            \ s:source.name)
       break
     endif
 
