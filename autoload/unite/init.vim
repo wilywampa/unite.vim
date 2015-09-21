@@ -207,10 +207,13 @@ function! unite#init#_unite_buffer() "{{{
             \ call unite#handlers#_on_buf_unload(expand('<afile>'))
       autocmd WinEnter,BufWinEnter <buffer>
             \ call unite#handlers#_on_bufwin_enter(bufnr(expand('<abuf>')))
-      autocmd WinLeave,BufWinLeave <buffer>
-            \ call unite#handlers#_restore_updatetime()
     augroup END
 
+    if v:version > 703 || v:version == 703 && has('patch418')
+      " Enable auto narrow feature.
+      autocmd plugin-unite InsertCharPre <buffer>
+            \ call unite#handlers#_on_insert_char_pre()
+    endif
     if v:version > 703 || v:version == 703 && has('patch867')
       " Enable auto narrow feature.
       autocmd plugin-unite TextChanged <buffer>
