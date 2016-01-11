@@ -394,6 +394,7 @@ function! unite#view#_resize_window() "{{{
   if (winheight(0) + &cmdheight + 2 >= &lines
         \ && !context.vertical)
         \ || !context.resize
+        \ || !context.split
     " Cannot resize.
     let context.unite__is_resize = 0
     return
@@ -652,8 +653,7 @@ function! unite#view#_quit(is_force, ...)  "{{{
 
     call unite#view#_close_preview_window()
 
-    if winnr('$') != 1 && !unite.context.temporary
-          \ && winnr('$') == unite.winmax
+    if winnr('$') != 1 && winnr('$') == unite.winmax
       execute unite.win_rest_cmd
       noautocmd execute unite.prev_winnr 'wincmd w'
     endif
@@ -773,6 +773,12 @@ function! unite#view#_print_error(message) "{{{
   endif
   for mes in message
     echohl WarningMsg | echomsg mes | echohl None
+  endfor
+endfunction"}}}
+function! unite#view#_print_warning(message) "{{{
+  let message = map(s:msg2list(a:message), '"[unite.vim] " . v:val')
+  for mes in message
+    echohl WarningMsg | echon mes | echohl None
   endfor
 endfunction"}}}
 function! unite#view#_print_source_error(message, source_name) "{{{
