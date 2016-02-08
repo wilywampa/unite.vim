@@ -687,6 +687,7 @@ function! unite#view#_quit(is_force, ...)  "{{{
     endif
   else
     redraw
+    stopinsert
   endif
 
   " Restore unite.
@@ -985,7 +986,7 @@ function! s:clear_previewed_buffer_list() "{{{
       if bufnr == bufnr('%')
         call unite#util#alternate_buffer()
       endif
-      silent execute 'bdelete!' bufnr
+      silent! execute 'bdelete!' bufnr
     endif
   endfor
 
