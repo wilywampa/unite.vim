@@ -32,7 +32,7 @@ call unite#util#set_default(
       \ '(%Y/%m/%d %H:%M:%S) ')
 "}}}
 
-function! unite#sources#buffer#define() "{{{
+function! unite#sources#buffer#define() abort "{{{
   return [s:source_buffer_all, s:source_buffer_tab]
 endfunction"}}}
 
@@ -44,7 +44,7 @@ let s:source_buffer_all = {
       \ 'default_kind' : 'buffer',
       \}
 
-function! s:source_buffer_all.hooks.on_init(args, context) "{{{
+function! s:source_buffer_all.hooks.on_init(args, context) abort "{{{
   let a:context.source__is_bang =
         \ (get(a:args, 0, '') ==# '!')
   let a:context.source__is_question =
@@ -62,7 +62,7 @@ function! s:source_buffer_all.hooks.on_init(args, context) "{{{
         \                   a:context.source__is_minus,
         \                   a:context.source__is_terminal)
 endfunction"}}}
-function! s:source_buffer_all.hooks.on_syntax(args, context) "{{{
+function! s:source_buffer_all.hooks.on_syntax(args, context) abort "{{{
   syntax match uniteSource__Buffer_Name /[^/ \[\]]\+\s/
         \ contained containedin=uniteSource__Buffer
   highlight default link uniteSource__Buffer_Name Function
@@ -82,7 +82,7 @@ function! s:source_buffer_all.hooks.on_syntax(args, context) "{{{
         \ contained containedin=uniteSource__Buffer
   highlight default link uniteSource__Buffer_Time Statement
 endfunction"}}}
-function! s:source_buffer_all.hooks.on_post_filter(args, context) "{{{
+function! s:source_buffer_all.hooks.on_post_filter(args, context) abort "{{{
   for candidate in a:context.candidates
     let candidate.action__path =
           \ unite#util#substitute_path_separator(
@@ -92,12 +92,12 @@ function! s:source_buffer_all.hooks.on_post_filter(args, context) "{{{
   endfor
 endfunction"}}}
 
-function! unite#sources#buffer#get_unite_buffer_list()
+function! unite#sources#buffer#get_unite_buffer_list() abort "{{{
   let s:prev_bufnr = bufnr('%')
   return s:get_buffer_list(0, 0, 0, 0, 0)
 endfunction"}}}
 
-function! s:source_buffer_all.gather_candidates(args, context) "{{{
+function! s:source_buffer_all.gather_candidates(args, context) abort "{{{
   if a:context.is_redraw
     " Recaching.
     let a:context.source__buffer_list =
@@ -118,7 +118,7 @@ function! s:source_buffer_all.gather_candidates(args, context) "{{{
 
   return candidates
 endfunction"}}}
-function! s:source_buffer_all.complete(args, context, arglead, cmdline, cursorpos) "{{{
+function! s:source_buffer_all.complete(args, context, arglead, cmdline, cursorpos) abort "{{{
   return ['!', '?', '+', '-', 't']
 endfunction"}}}
 
@@ -127,7 +127,7 @@ let s:source_buffer_tab.name = 'buffer_tab'
 let s:source_buffer_tab.description =
       \ 'candidates from buffer list in current tab'
 
-function! s:source_buffer_tab.gather_candidates(args, context) "{{{
+function! s:source_buffer_tab.gather_candidates(args, context) abort "{{{
   if a:context.is_redraw
     " Recaching.
     let a:context.source__buffer_list =
@@ -167,7 +167,7 @@ function! s:source_buffer_tab.gather_candidates(args, context) "{{{
 endfunction"}}}
 
 " Misc
-function! s:make_word(bufnr) "{{{
+function! s:make_word(bufnr) abort "{{{
   let filetype = getbufvar(a:bufnr, '&filetype')
   if filetype ==# 'vimfiler'
     let path = getbufvar(a:bufnr, 'vimfiler').current_dir
@@ -183,7 +183,7 @@ function! s:make_word(bufnr) "{{{
 
   return path
 endfunction"}}}
-function! s:make_abbr(bufnr, flags) "{{{
+function! s:make_abbr(bufnr, flags) abort "{{{
   let bufname = fnamemodify(bufname(a:bufnr), ':t')
   if bufname == ''
     let bufname = bufname(a:bufnr)
@@ -223,12 +223,12 @@ function! s:make_abbr(bufnr, flags) "{{{
   return (getbufvar(a:bufnr, '&buftype') =~# 'nofile' ? '[nofile] ' : '' ) .
          \ unite#util#substitute_path_separator(path) . ' '
 endfunction"}}}
-function! s:compare(candidate_a, candidate_b) "{{{
+function! s:compare(candidate_a, candidate_b) abort "{{{
   return a:candidate_a.action__buffer_nr == s:prev_bufnr ?  1 :
       \ (a:candidate_b.action__buffer_nr == s:prev_bufnr ? -1 :
       \ a:candidate_b.source__time - a:candidate_a.source__time)
 endfunction"}}}
-function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus, is_terminal) "{{{
+function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus, is_terminal) abort "{{{
   " Get :ls flags.
   redir => output
   silent! ls
@@ -263,7 +263,7 @@ function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus, is_terminal
   return list
 endfunction"}}}
 
-function! s:is_listed(is_bang, is_question, is_plus, is_minus, is_terminal, bufnr) "{{{
+function! s:is_listed(is_bang, is_question, is_plus, is_minus, is_terminal, bufnr) abort "{{{
   let bufname = bufname(a:bufnr)
   let buftype = getbufvar(a:bufnr, '&buftype')
   return bufexists(a:bufnr) &&
@@ -280,7 +280,7 @@ function! s:is_listed(is_bang, is_question, is_plus, is_minus, is_terminal, bufn
         \         unite#get_current_unite().buffer_name)
 endfunction"}}}
 
-function! s:format_time(time) "{{{
+function! s:format_time(time) abort "{{{
   if empty(a:time)
     return ''
   endif
